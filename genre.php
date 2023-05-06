@@ -1,5 +1,12 @@
 <?php
 include('connection.php');
+
+if (isset($_POST['add'])) {
+    header("Location: genreadd.php");
+}
+
+$results = mysqli_query($connection, "SELECT * FROM genreTBL");
+
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +48,7 @@ include('connection.php');
             </div>
 
             <div class="navbarsecond">
-                <button class="btn btn-primary"><a href="genreadd.php" style="text-decoration: none; color: white;">Add</a></button>
+                <button class="btn btn-primary" name="add">Add</button>
             </div>
         </div>
 
@@ -50,19 +57,57 @@ include('connection.php');
                 <tr>
                     <th scope="col">id</th>
                     <th scope="col">Genre</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
+                <?php
+                while ($row = mysqli_fetch_array($results)) {
+                    echo '<tr>';
+                    echo '<th scope="row">' . $row['id'] . '</th>';
+                    echo '<td>' . $row['genre_name'] . '</td>';
+                    echo '<td class="d-flex flex-row gap-3">';
+                    echo '<a href="genreedit.php?id=' . $row['id'] . '" class="btn btn-primary btn-sm crud-btn">Edit</a>';
+                    echo '<button type="button" class="btn btn-danger btn-sm crud-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="deleteItem(' . $row['id'] . ')">Delete</button>';
+
+                    echo '</td>';
+
+                    echo '</tr>';
+                }
+                ?>
             </tbody>
         </table>
+
+        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this item?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="deleteButton">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </form>
 
 
-
+    <script>
+        function deleteItem(id) {
+            var deleteButton = document.getElementById('deleteButton');
+            deleteButton.addEventListener('click', function() {
+                window.location.href = 'genredelete.php?id=' + id;
+            });
+        }
+    </script>
     <!-- LINK LATEST BOOTSTRAP JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 </body>
