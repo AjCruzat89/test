@@ -24,6 +24,7 @@ $results = mysqli_query($connection, $query);
 $totalRecords = mysqli_num_rows(mysqli_query($connection, "SELECT * FROM genreTBL"));
 $totalPages = ceil($totalRecords / $recordsPerPage);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -48,7 +49,7 @@ $totalPages = ceil($totalRecords / $recordsPerPage);
 </head>
 
 <body>
-    <div class="d-flex flex-row justify-content-between px-5 py-3">
+    <div class="d-flex flex-row justify-content-between px-4 py-3">
         <div class="navbarfirst">
             <form method="GET">
                 <input id="search" type="search" class="" name="search" placeholder="Search..." value="" />
@@ -80,7 +81,6 @@ $totalPages = ceil($totalRecords / $recordsPerPage);
                 echo '<button type="button" class="btn btn-danger btn-sm crud-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="deleteItem(' . $row['id'] . ')">Delete</button>';
 
                 echo '</td>';
-
                 echo '</tr>';
             }
             ?>
@@ -89,7 +89,7 @@ $totalPages = ceil($totalRecords / $recordsPerPage);
 
     <?php
     echo '<nav aria-label="Page navigation">';
-    echo '<ul class="pagination justify-content-start px-5">';
+    echo '<ul class="pagination justify-content-start px-4">';
 
     for ($i = 1; $i <= $totalPages; $i++) {
         $activeClass = ($i == $page) ? 'active' : '';
