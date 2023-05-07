@@ -4,25 +4,25 @@ include('connection.php');
 if (isset($_POST['add'])) {
     header("Location: genreadd.php");
 }
+    // PAGINATION
+    $page = isset($_GET['page']) ? $_GET['page'] : 1;
+    $recordsPerPage = 8;
+    $offset = ($page - 1) * $recordsPerPage;
+    $query = "SELECT * FROM genreTBL LIMIT $recordsPerPage OFFSET $offset";
+    $results = mysqli_query($connection, $query);
+    $totalRecords = mysqli_num_rows(mysqli_query($connection, "SELECT * FROM genreTBL"));
+    $totalPages = ceil($totalRecords / $recordsPerPage);
 
 
-
-$page = isset($_GET['page']) ? $_GET['page'] : 1;
-$recordsPerPage = 10;
-$offset = ($page - 1) * $recordsPerPage;
-
-$query = "SELECT * FROM genreTBL";
-if (isset($_GET['search']) && !empty($_GET['search'])) {
+    // IF THERES A SEARCH THERE SHOULD BE ONLY THE SAME AMOUNT FOR THE PAGINATION
+if(isset($_GET['search']) && !empty($_GET['search'])){
     $search = $_GET['search'];
-    $query .= " WHERE id LIKE '%$search%' OR genre_name LIKE '%$search%'";
+    $query = "SELECT * FROM genreTBL WHERE id LIKE '%$search%' OR genre_name LIKE '%$search%' LIMIT $recordsPerPage OFFSET $offset ";
+    $results = mysqli_query($connection, $query);
+    $totalRecords = mysqli_num_rows(mysqli_query($connection, "SELECT * FROM genreTBL WHERE id LIKE '%$search%' OR genre_name LIKE '%$search%'"));
+    $totalPages = ceil($totalRecords / $recordsPerPage);
 }
 
-$query .= " LIMIT $recordsPerPage OFFSET $offset";
-$results = mysqli_query($connection, $query);
-
-
-$totalRecords = mysqli_num_rows(mysqli_query($connection, "SELECT * FROM genreTBL"));
-$totalPages = ceil($totalRecords / $recordsPerPage);
 ?>
 
 <!DOCTYPE html>
@@ -92,8 +92,7 @@ $totalPages = ceil($totalRecords / $recordsPerPage);
     echo '<ul class="pagination justify-content-start px-4">';
 
     for ($i = 1; $i <= $totalPages; $i++) {
-        $activeClass = ($i == $page) ? 'active' : '';
-        echo '<li class="page-item ' . $activeClass . '"><a class="page-link" href="?page=' . $i . '">' . $i . '</a></li>';
+        echo '<li class="page-item"><a class="page-link" href="?page=' . $i . '">' . $i . '</a></li>';
     }
 
     echo '</ul>';
