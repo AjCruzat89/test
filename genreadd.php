@@ -47,8 +47,10 @@ if (isset($_POST['back'])){
             <div class="d-flex justify-content-center align-items-center" style="height: 100%; padding-bottom: 150px !important;">
                 <div class="row row-cols-1 gy-3 gx-0" style="width: 300px;">
                     <label for="">Genre Name</label>
-                    <input type="text" name="genre_name" id="" placeholder="Enter genre..." class="p-1 ">
+                    <input type="text" name="genre_name" id="" placeholder="Enter genre..." class="p-1">
+                    <div class="d-flex">
                     <button class="btn btn-success" name="save">Save</button>
+                    </div>
                 </div>
             </div>
         </div>

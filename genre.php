@@ -4,6 +4,25 @@ include('connection.php');
 if (isset($_POST['add'])) {
     header("Location: genreadd.php");
 }
+
+
+
+$page = isset($_GET['page']) ? $_GET['page'] : 1;
+$recordsPerPage = 10;
+$offset = ($page - 1) * $recordsPerPage;
+
+$query = "SELECT * FROM genreTBL";
+if (isset($_GET['search']) && !empty($_GET['search'])) {
+    $search = $_GET['search'];
+    $query .= " WHERE id LIKE '%$search%' OR genre_name LIKE '%$search%'";
+}
+
+$query .= " LIMIT $recordsPerPage OFFSET $offset";
+$results = mysqli_query($connection, $query);
+
+
+$totalRecords = mysqli_num_rows(mysqli_query($connection, "SELECT * FROM genreTBL"));
+$totalPages = ceil($totalRecords / $recordsPerPage);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,14 +60,6 @@ if (isset($_POST['add'])) {
             </div>
     </div>
 
-    <?php
-    if (isset($_GET['search']) && !empty($_GET['search'])) {
-        $search = $_GET['search'];
-        $results = mysqli_query($connection, "SELECT * FROM genreTBL WHERE id LIKE '%$search%' OR genre_name LIKE '%$search%'");
-    } else {
-        $results = mysqli_query($connection, "SELECT * FROM genreTBL");
-    }
-    ?>
 
     <table class="table">
         <thead>
@@ -64,7 +75,7 @@ if (isset($_POST['add'])) {
                 echo '<tr>';
                 echo '<th scope="row">' . $row['id'] . '</th>';
                 echo '<td>' . $row['genre_name'] . '</td>';
-                echo '<td class="d-flex flex-row gap-3">';
+                echo '<td class="">';
                 echo '<a href="genreedit.php?id=' . $row['id'] . '" class="btn btn-primary btn-sm crud-btn">Edit</a>';
                 echo '<button type="button" class="btn btn-danger btn-sm crud-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="deleteItem(' . $row['id'] . ')">Delete</button>';
 
@@ -75,6 +86,19 @@ if (isset($_POST['add'])) {
             ?>
         </tbody>
     </table>
+
+    <?php
+    echo '<nav aria-label="Page navigation">';
+    echo '<ul class="pagination justify-content-start px-5">';
+
+    for ($i = 1; $i <= $totalPages; $i++) {
+        $activeClass = ($i == $page) ? 'active' : '';
+        echo '<li class="page-item ' . $activeClass . '"><a class="page-link" href="?page=' . $i . '">' . $i . '</a></li>';
+    }
+
+    echo '</ul>';
+    echo '</nav>';
+    ?>
 
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
