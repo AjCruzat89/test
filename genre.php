@@ -4,11 +4,7 @@ include('connection.php');
 if (isset($_POST['add'])) {
     header("Location: genreadd.php");
 }
-
-$results = mysqli_query($connection, "SELECT * FROM genreTBL");
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -33,69 +29,71 @@ $results = mysqli_query($connection, "SELECT * FROM genreTBL");
 </head>
 
 <body>
-    <form method="POST">
-        <div class="d-flex flex-row justify-content-between p-3">
-            <div class="navbarfirst">
-                <div class="input-group">
-                    <div class="form-outline">
-                        <input id="search-input" type="search" id="form1" class="form-control" />
-                        <label class="form-label" for="form1">Search</label>
-                    </div>
-                    <button id="search-button" type="button" class="btn btn-primary">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </div>
-
+    <div class="d-flex flex-row justify-content-between px-5 py-3">
+        <div class="navbarfirst">
+            <form method="GET">
+                <input id="search" type="search" class="" name="search" placeholder="Search..." value="" />
+            </form>
+        </div>
+        <form method="POST">
             <div class="navbarsecond">
                 <button class="btn btn-primary" name="add">Add</button>
             </div>
-        </div>
+    </div>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">id</th>
-                    <th scope="col">Genre</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                while ($row = mysqli_fetch_array($results)) {
-                    echo '<tr>';
-                    echo '<th scope="row">' . $row['id'] . '</th>';
-                    echo '<td>' . $row['genre_name'] . '</td>';
-                    echo '<td class="d-flex flex-row gap-3">';
-                    echo '<a href="genreedit.php?id=' . $row['id'] . '" class="btn btn-primary btn-sm crud-btn">Edit</a>';
-                    echo '<button type="button" class="btn btn-danger btn-sm crud-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="deleteItem(' . $row['id'] . ')">Delete</button>';
+    <?php
+    if (isset($_GET['search']) && !empty($_GET['search'])) {
+        $search = $_GET['search'];
+        $results = mysqli_query($connection, "SELECT * FROM genreTBL WHERE id LIKE '%$search%' OR genre_name LIKE '%$search%'");
+    } else {
+        $results = mysqli_query($connection, "SELECT * FROM genreTBL");
+    }
+    ?>
 
-                    echo '</td>';
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">id</th>
+                <th scope="col">Genre</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            while ($row = mysqli_fetch_array($results)) {
+                echo '<tr>';
+                echo '<th scope="row">' . $row['id'] . '</th>';
+                echo '<td>' . $row['genre_name'] . '</td>';
+                echo '<td class="d-flex flex-row gap-3">';
+                echo '<a href="genreedit.php?id=' . $row['id'] . '" class="btn btn-primary btn-sm crud-btn">Edit</a>';
+                echo '<button type="button" class="btn btn-danger btn-sm crud-btn" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="deleteItem(' . $row['id'] . ')">Delete</button>';
 
-                    echo '</tr>';
-                }
-                ?>
-            </tbody>
-        </table>
+                echo '</td>';
 
-        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to delete this item?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-danger" id="deleteButton">Delete</button>
-                    </div>
+                echo '</tr>';
+            }
+            ?>
+        </tbody>
+    </table>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this item?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="deleteButton">Delete</button>
                 </div>
             </div>
         </div>
+    </div>
 
     </form>
 
